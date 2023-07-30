@@ -1,0 +1,215 @@
+/* main body stuff */
+
+body {
+    background-color: #555888;
+    background-image: url(https://images.unsplash.com/photo-1468276311594-df7cb65d8df6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80);
+    background-blend-mode: soft-light;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* shouldn't title be in header?
+it's here so the order of .title .introTitle doesn't get messed up */
+
+.title {
+    font-family: 'Kdam Thmor Pro', sans-serif;
+    color: white;
+    font-size: 50px;
+    margin-right: 20px;
+}
+
+.introTitle {
+    font-size: 40px;
+    color: #255893;
+    text-align: center !important;
+    margin: inherit;
+    display: inline-block;
+}
+
+.container {
+    border-style: groove;
+    border-width: 2px;
+    border-color: #255893;
+    border-radius: 2px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    font-family: sans-serif;
+    margin: 20px auto;
+    text-align: center;
+    color: black;
+    position: relative;
+    min-width: 30%;
+    max-width: fit-content;
+}
+
+.bigPage {
+    min-width: 95%;
+    text-align: left;
+}
+
+/* header */
+
+#header {
+    display: inline-flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+#headerLink {
+    margin: auto;
+    background-color: #255893;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    color: white;
+    text-decoration: none;
+    padding: 20px 20px 20px 20px;
+}
+
+#headerLink:hover {
+    background-color: #fff;
+    color: #555599;
+}
+
+/* input */
+
+.acc {
+    height: 25px;
+    margin: 10px;
+    padding: 10px;
+    width: 50%;
+}
+
+.button {
+    background-color: #255893;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    color: white;
+    padding: 10px 20px 10px 20px;
+    cursor: pointer;
+    margin: 10px 0px 10px;
+}
+
+textarea {
+    resize: none;
+    font-family: inherit;
+}
+
+/* */
+
+#smallCatBanner {
+    background-color: #255893;
+    color: white;
+    box-shadow: 2px;
+    font-weight: bold;
+    margin-right: auto;
+    width: 90%;
+    padding: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
+#big_pfp img {
+    border: 1px;
+    border-style: solid;
+    width: 100px;
+    height: 100px;
+}
+
+#small_pfp img {
+    border: 1px;
+    border-style: solid;
+    border-radius: 50%;
+    display: inline-flex;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+}
+
+#smallPostContent {
+    border: 1px;
+    border-style: groove;
+    border-color: gray;
+    height: 50px;
+    padding: 9px;
+    max-width: 90%;
+    margin-bottom: 20px;
+    vertical-align: top;
+    overflow: hidden;
+}
+
+#topicInfo {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#topicTitle {
+    font-size: 20px;
+}
+
+#topicPoster { 
+    font-size: 15px;
+}
+
+#date {
+    font-size: 15px;
+}
+
+.post {
+    height: 25px;
+    width: 200px;
+}
+
+#postContent {
+    display: inline-block;
+}
+
+#post {
+    height: 100px;
+
+}
+
+/* actual forum post */
+
+#post {
+    height: min-content;
+    border: 1px solid; 
+    max-height: fit-content;
+    display: flex;
+}
+
+#userInfo {
+    display: inline-block;
+    padding: 10px;
+    text-align: center;
+}
+
+#postContent {
+    border-left: 1px solid;
+    vertical-align: top;
+    padding: 10px;
+    flex-grow: 1;
+}
+
+/* misc or can be used anywhere else */
+
+a:hover {
+    color: #99f;
+}
+
+#catDesc {
+    font-size: 25px;
+}
+
+#topicDate {
+    font-size: 15px;
+    border-bottom: 1px solid;
+    display: block;
+    padding-bottom: 10px;
+}

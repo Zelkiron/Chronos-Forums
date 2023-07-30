@@ -1,0 +1,22 @@
+For the home page, I'm thinking of having the header of the subforum name be in dark blue.
+Search functions will be in the lists in the individual pages. 
+    Or I can have a universal search page.
+Under profile picture and username: edit profile, messages, log out, etc
+Do posts that can only be viewed by mods/admins or something
+Maybe change the CSS for the wrong messages so they stand out more.
+
+User ranking: 
+-1 = banned
+0 = not activated yet
+1 = normal
+2 = mod
+3 = admin
+4 = owner
+
+Visibility ranking: 
+0 = "deleted"
+1 = visible to everyone
+2 = only visible to mods+
+3 = only visible to admins+ 
+
+Change visiblity for createTopic for staff categories and stuff.
