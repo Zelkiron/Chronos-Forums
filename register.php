@@ -35,7 +35,7 @@
                 $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
                 $username = str_replace(' ', '', trim($_POST['username']));
                 $password = $_POST['password'];
-                $q = $pdo->prepare('SELECT * FROM users WHERE username = :u');
+                $q = $pdo->prepare('SELECT * FROM users WHERE username = :u OR email = :e');
                 $q->bindParam('u', $username);
                 $q->execute();
                 switch (true) {
@@ -50,7 +50,7 @@
                     case (!ctype_alnum($username)):
                         die('Your username should only be letters and numbers.');
                     case ($q->rowCount() == 1):
-                        die('This username already exists.');
+                        die('This account already exists.');
                     default: 
                         $query = $pdo->prepare('INSERT INTO users (email, username, password, rank, date_created, act_code) VALUES (:email, :user, :pass, :r, now(), :code)');
                         $query->bindParam('email', $email);
@@ -67,7 +67,7 @@
                         "<html>
                         <body>
                         Thank you for registering an account with Chronos Forums!<br>
-                        <a href='http://localhost/PHP%20Projects/Forum/activate.php?email=".$email."&code=".$code."'>Click here</a>
+                        <a href='activate.php?email=".$email."&code=".$code."'>Click here</a>
                         to activate your account.<br>
                         On our end, we will only use your email for activating your account and resetting your password.<br>
                         We hope you will have a great time here!<br><br>
