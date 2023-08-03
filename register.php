@@ -37,6 +37,7 @@
                 $password = $_POST['password'];
                 $q = $pdo->prepare('SELECT * FROM users WHERE username = :u OR email = :e');
                 $q->bindParam('u', $username);
+                $q->bindParam('e', $email);
                 $q->execute();
                 switch (true) {
                     case (empty($email) || empty($username) || empty($password)):
