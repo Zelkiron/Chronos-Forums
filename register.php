@@ -53,17 +53,18 @@
                     case ($q->rowCount() == 1):
                         die('This account already exists.');
                     default: 
-                        $query = $pdo->prepare('INSERT INTO users (email, username, password, rank, date_created, act_code) VALUES (:email, :user, :pass, :r, now(), :code)');
+                        $code = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
+                        $query = $pdo->prepare('INSERT INTO users (email, username, `password`, `rank`, date_created, act_code) VALUES (:email, :user, :pass, :r, now(), :code)');
                         $query->bindParam('email', $email);
                         $query->bindParam('user', $username);
                         $hash = password_hash($password, PASSWORD_DEFAULT);
                         $query->bindParam('pass', $hash);
                         $query->bindValue('r', 0);
-                        $query->bindValue('code', password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT));
-                        $query->execute();
-                        echo 'Congratulations on creating your account, '.$username.'! 
-                        To complete the last step of the registration process, check your email.
-                        Just in case, check your spam folder and unmark the email as spam to be able to click on the link.';
+                        $query->bindValue('code', $code);
+                        $query->execute() or die(PDO::ERRMODE_EXCEPTION);
+                        echo 'Congratulations on creating your account, '.$username.'!<br>
+                        To complete the last step of the registration process, check your email.<br>
+                        Just in case, check your spam folder and unmark the email as spam to be able to click on the link.<br>';
                         $email_string = 
                         "<html>
                         <body>
@@ -82,7 +83,7 @@
                         $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
                         $headers .= "X-Priority: 3\r\n";
                         $headers .= "X-Mailer: PHP". phpversion() ."\r\n";
-                        mail($email, "Account Activation", $email_string, $headers);
+                        mail($email, "Account Activation", $email_string, $headers) or die("Not able to send mail");
                 }
             }   
             ?>
