@@ -1,0 +1,1 @@
+alter table categories rename column `desc` to `description`;
