@@ -13,14 +13,14 @@
     </head>
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
         <div class='container'>

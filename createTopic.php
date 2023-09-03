@@ -13,18 +13,18 @@
     </head>
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
-        <div class='container bigPage'>
-            <span class='title introTitle'>Create Topic</span><br>
+        <div class='container big-page'>
+            <span class='container__main-header'>Create Topic</span><br>
             <?php 
             include('connect.php');
             if(isset($_SESSION['id'])) {
@@ -36,9 +36,9 @@
                 $catQuery = $pdo->prepare("SELECT * FROM categories");
                 $catQuery->execute();
                 foreach ($catQuery->fetchAll() as $row) {
-                    $catName = $row['name'];
-                    $cat_id = $row['id'];
-                    $echo .= "<option value='".$cat_id."'>".$catName."</option>";
+                    $category_name = $row['name'];
+                    $category_id = $row['id'];
+                    $echo .= "<option value='".$category_id."'>".$category_name."</option>";
                 }
                 $echo .= "</select><br><br><textarea name='content' placeholder='Tell the world what you have to say!'
                 rows='17.5' cols='100' required></textarea><br><br>
@@ -49,26 +49,36 @@
                     $name = $_POST['name'];
                     $cat = $_POST['cat'];
                     $content = $_POST['content'];
-                    $isLocked = 0;
                     switch (true) {
-                        case (empty($name) || $cat_id == 0 || empty($content)):
+                        case (empty($name) || $category_id == 0 || empty($content)):
                             die("One or more of the required fields were not properly filled out.");
                         case (strlen($name) > 100):
                             die("The name of your topic cannot exceed 100 characters.");
                         case ($cat == 1):
                             $isLocked = 1;
                     }
-                    $createTopic = $pdo->prepare("INSERT INTO topics (cat_id, poster_id, name, content, dateCreated, dateNewReply, visibility, isLocked) VALUES (:c, :p, :n, :t, now(), now(), '1', :l)");
-                    $createTopic->bindParam('c', $cat);
-                    $createTopic->bindParam('p', $poster_id);
-                    $createTopic->bindParam('n', $name);
-                    $createTopic->bindParam('t', $content);
-                    $createTopic->bindParam('l', $isLocked);
+                    $new_topic_id = 0;
+                    $topic_query = $pdo->prepare('SELECT topic_id FROM posts ORDER BY topic_id DESC LIMIT 1');
+                    $topic_query->execute();
+                    foreach($topic_query->fetch() as $row) {
+                        $new_topic_id = $row['topic_id'];
+                    }
+                    $new_topic_id++;
+                    $createTopic = $pdo->prepare("INSERT INTO posts (category_id, topic_id, poster_id, post_order, `name`, content, date_created, date_new_reply, visibility, isLocked) 
+                                                  VALUES (:category_id, :topic_id, :poster_id, :topic_name, :content, now(), now(), '1', '0')");
+
+                    $createTopic->bindParam('category_id', $cat);
+                    $createTopic->bindParam('topic_id', $new_topic_id);
+                    $createTopic->bindParam('poster_id', $poster_id);
+                    $createTopic->bindParam('topic_name', $name);
+                    $createTopic->bindParam('content', $content);
+
                     $createTopic->execute();
-                    $updateCat = $pdo->prepare("UPDATE categories SET topics = topics + 1 AND replies = replies + 1 WHERE id = :i");
+
+                    $updateCat = $pdo->prepare("UPDATE categories SET topics = topics + 1 AND posts = posts + 1 WHERE id = :i");
                     $updateCat->bindParam('i', $cat);
                     $updateCat->execute();
-                    echo "Topic successfully created!";
+                    header('Location: topic.php?id='.$new_topic_id.'');
                 }
             } else {
                 echo "Oops! You need to be <a href='login.php'>logged in</a> to use this!";

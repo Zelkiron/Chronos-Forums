@@ -13,23 +13,23 @@
     </head>
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
         <div class='container'>
             <?php 
             require('connect.php');
             if(isset($_SESSION['id'])) {
-                echo "<p class='title introTitle'>Change Password</p>
+                echo "<p class='container__main-header'>Change Password</p>
                 <form method='post'>
-                    <input type='password' class='acc' name='password' placeholder='New Password' required autofocus><br>
+                    <input type='password' class='default-input' name='password' placeholder='New Password' required autofocus><br>
                     <input type='submit' class='button' name='submit'>
                 </form>";
                 if(isset($_POST['submit'])) {
@@ -53,9 +53,9 @@
                     }
                     switch (true) {
                         case ($query->rowCount() == 1 && password_verify($code, $tempCode) == 1):
-                            echo "<p class='title introTitle'>Change Password</p>
+                            echo "<p class='container__main-header'>Change Password</p>
                                 <form method='post'>
-                                    <input type='password' class='acc' name='password' placeholder='New Password' required autofocus><br>
+                                    <input type='password' class='default-input' name='password' placeholder='New Password' required autofocus><br>
                                     <input type='submit' class='button' name='submit'>
                                 </form>";
                                 if(isset($_POST['submit'])) {
@@ -68,10 +68,10 @@
                                     echo 'Your password was successfully changed!';
                                 }
                         default: 
-                            die("<p class='title introTitle'>404 Not Found</p>");
+                            die("<p class='container__main-header'>404 Not Found</p>");
                     }
                 } else {
-                    die("<p class='title introTitle'>404 Not Found</p>");
+                    die("<p class='container__main-header'>404 Not Found</p>");
                 }
             }
             ?>

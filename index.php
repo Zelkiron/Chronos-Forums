@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php 
+require('functions.php');
+session_start(); 
+require('connect.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -13,74 +17,103 @@
     </head>
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php
+            //doing a query to see if the user is a high enough rank to see the admin panel (3)
+            $rank_query = $pdo->prepare("SELECT `rank` FROM users WHERE username = :u");
+            $rank_query->bindParam('u', $_SESSION['username']);
+            $rank_query->execute();
+
+            if($rank_query->rowCount() == 1) {
+                foreach($rank_query->fetchAll() as $row) {
+                    $rank = $row['rank'];
+
+                    if($rank >= 3) {
+                        echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
+                    }
+                }
+            }
+            ?>
         </div>
 
         <br>
 
-        <div class='container bigPage'>
-            <?php 
-            include('connect.php');
+        <div class='container big-page'>
+            <?php
+            //welcome the user to the forum if they are logged in or not regardless
+            if(isset($_SESSION['id'])) {
+                echo 'Welcome to the forums, '.$_SESSION['username'].'!';
+            } else {
+                echo 'Welcome to the forums, Guest! <a class="noticeable" href="login.php">Click here</a> to login.';
+            }
 
             //get the name and id of the category itself (category id will be used in topic query)
             //also pritorize categories that everyone can see (staff categories last)
-            $catQuery = $pdo->prepare("SELECT id, name FROM categories WHERE visibility = '1'");
-            $catQuery->execute();
+            $category_query = $pdo->prepare("SELECT id, `name` FROM categories WHERE visibility = '1'");
+            $category_query->execute();
 
             //initalize content variable for later
             $content = "";
 
-            foreach ($catQuery->fetchAll() as $row) {
-                $catName = $row['name'];
-                $cat_id = $row['id'];
+            foreach ($category_query->fetchAll() as $row) {
+                $category_name = $row['name'];
+                $category_id = $row['id'];
 
                 //add all the necessary information for the category
                 $content .=
-                "<div id='smallCatBanner'>
-                    <a href='category.php?cat=".$cat_id."'>".$catName."</a>
+                "<div id='category-banner--small'>
+                    <a href='category.php?cat=".$category_id."'>".$category_name."</a>
                 </div>";
 
                 //get info for topic
-                $topicQuery = $pdo->prepare("SELECT id, poster_id, name, dateCreated, replies FROM topics WHERE cat_id = :i AND visibility = '1' ORDER BY dateNewReply DESC LIMIT 1");
-                $topicQuery->bindParam('i', $cat_id);
-                $topicQuery->execute();
+                $topic_query = $pdo->prepare("SELECT id, poster_id, `name`, date_new_reply FROM posts WHERE category_id = :i AND post_order = '1' AND visibility = '1' ORDER BY date_new_reply DESC LIMIT 1");
+                $topic_query->bindParam('i', $category_id);
+                $topic_query->execute();
+                
+                //if there are no topics in the category
+                if($topic_query->rowCount() == 0) {
+                    $content .= 
+                    "<div id='post-content--small'>There are no topics. Strange!</div>
+                    ";
+                }
 
-                foreach ($topicQuery->fetchAll() as $row) {
+                foreach ($topic_query->fetchAll() as $row) {
                     $topic_id = $row['id'];
                     $poster_id = $row['poster_id'];
-                    $topicName = $row['name'];
-                    $topicDate = $row['dateCreated'];
-                    $topicDate = strtotime($topicDate);
-                    $topicReplies = $row['replies'];
+                    $topic_name = $row['name'];
+                    $last_reply = $row['date_new_reply'];
+                    $last_reply = strtotime($last_reply);
+                    $replies = $row['replies'];
 
-                    $posterQuery = $pdo->prepare("SELECT * FROM users WHERE id = :i");
-                    $posterQuery->bindParam('i', $poster_id);
-                    $posterQuery->execute();
+                    $poster_query = $pdo->prepare("SELECT * FROM users WHERE id = :i");
+                    $poster_query->bindParam('i', $poster_id);
+                    $poster_query->execute();
 
-                    foreach($posterQuery->fetchAll() as $row) {
-                        $posterName = $row['username'];
+                    foreach($poster_query->fetchAll() as $row) {
+                        $poster_id = $row['id'];
+                        $poster_name = $row['username'];
                         $pfp = $row['pfp'];
 
                         $content .= 
-                        "<div id='smallPostContent'>
-                        <a href='profile.php?username=".$posterName."'>
-                            <div id='small_pfp'>
+                        "<div id='post-content--small'>
+                        <a href='profile.php?id=".$poster_id."'>
+                            <div id='profile-picture--small'>
                                 <image src='".$pfp."'></image>
                             </div>
                         </a>
 
-                        <div id='topicInfo'>
-                            <a href='topic.php?id=".$topic_id."' id='topicTitle'>".$topicName."</a><br>
-                            <a href='profile.php?username=".$posterName."' id='topicPoster'>".$posterName."</a> | 
-                            <span id='date'>".date("n/j/y, g:i A", $topicDate)."
-                            <br>Replies: ".$topicReplies."</span>
+                        <div id='topic-post__info'>
+                            <a href='topic.php?id=".$topic_id."' id='topic-post__title'>".$topic_name."</a><br>
+                            <a href='profile.php?id=".$poster_id."' id='topic-post__poster'>".$poster_name."</a> | 
+                            <span id='post__date'>".date("n/j/y, g:i A", $last_reply)."
+                            <br>Replies: ".$replies."</span>
                         </div>
                         </div>";
                     }
@@ -88,7 +121,6 @@
             }
 
             echo $content;
-
             ?>
         </div>
     </body>

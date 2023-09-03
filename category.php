@@ -13,82 +13,89 @@
 
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
             <br>
-        <div class='container bigPage'>
+        <div class='container big-page'>
             <?php 
             include('connect.php');
+            try {
             if (isset($_GET['cat'])) {
                 //get cat id from url and sanitize just in case to prevent xss attacks
-                $cat_id = htmlspecialchars($_GET['cat']);
+                $url_cat_id = htmlspecialchars($_GET['cat']);
 
-                //query for category
-                $catQuery = $pdo->prepare("SELECT name, `desc`, topics, replies FROM categories WHERE id = :i");
-                $catQuery->bindParam('i', $cat_id);
-                $catQuery->execute();
+                //query for category information
+                $get_category_info_query = $pdo->prepare("SELECT `name`, `desc`, topics, posts FROM categories WHERE id = :i");
+                $get_category_info_query->bindParam('i', $url_cat_id);
+                $get_category_info_query->execute();
+                
+                //if the category is not found, redirect to 404
+                if($get_category_info_query->rowCount() == 0) {
+                    header('Location: 404.html');
+                }
 
                 //intialize content variable
                 $content = "";
 
                 //get everything needed from the categories table
-                foreach($catQuery->fetchAll() as $row) {
-                    $catName = $row['name'];
-                    $catDesc = $row['desc'];
-                    $catNumTopics = $row['topics'];
-                    $catNumReplies = $row['replies'];
+                foreach($get_category_info_query->fetchAll() as $row) {
+                    $category_name = $row['name'];
+                    $category_description = $row['desc'];
+                    $cat_num_topics = $row['topics'];
+                    $cat_num_replies = $row['replies'];
                     
                     //append category variables to content variable
-                    $content .= "<span class='title introTitle'>".$catName."</span>
-                    <br><span id='catDesc'>".$catDesc."</span><br><br>This category has ".$catNumTopics." topics and ".$catNumReplies." replies.<br>
+                    $content .= "<span class='container__main-header'>".$category_name."</span>
+                    <br><span id='catDesc'>".$category_description."</span><br><br>This category has ".$cat_num_topics." topics and ".$cat_num_replies." replies.<br>
                     <a href='createTopic.php'><button class='button'>Create a Topic</button></a><hr><br>";
                 }
 
                 //query for topics in this category
-                $topicQuery = $pdo->prepare("SELECT id, poster_id, name, dateCreated, replies FROM topics WHERE cat_id = :c AND visibility = '1' ORDER BY dateNewReply DESC");
-                $topicQuery->bindParam('c', $cat_id);
-                $topicQuery->execute();
+                $topic_query = $pdo->prepare("SELECT topic_id, poster_id, `name`, date_created, replies, rep FROM posts WHERE$url_cat_id = :c AND visibility = '1' AND post_order = '1' ORDER BY date_new_reply DESC");
+                $topic_query->bindParam('c', $url_cat_id);
+                $topic_query->execute();
 
                 //get everything needed from topics table
-                foreach($topicQuery->fetchAll() as $row) {
-                    $topic_id = $row['id'];
+                foreach($topic_query->fetchAll() as $row) {
+                    $topic_id = $row['topic_id'];
                     $poster_id = $row['poster_id'];
-                    $topicName = $row['name'];
-                    $topicDate = $row['dateCreated'];
-                    $topicReplies = $row['replies'];
+                    $topic_name = $row['name'];
+                    $topic_date = $row['date_created'];
+                    $topic_replies = $row['replies'];
+                    $topic_rep = $row['rep'];
 
-                    //convert topicDate to integer for date() function
-                    $topicDate = strtotime($topicDate);
+                    //convert topic_date to integer for date() function
+                    $topic_date = strtotime($topic_date);
 
                      //query for information about the topic poster 
-                    $posterQuery = $pdo->prepare("SELECT username, pfp FROM users WHERE id = :i");
-                    $posterQuery->bindParam('i', $poster_id);
-                    $posterQuery->execute();
+                    $poster_query = $pdo->prepare("SELECT username, pfp FROM users WHERE id = :i");
+                    $poster_query->bindParam('i', $poster_id);
+                    $poster_query->execute();
 
                     //get everything we need about the poster
-                    foreach($posterQuery->fetchAll() as $row) {
-                        $posterName = $row['username'];
-                        $pfp = $row['pfp'];
+                    foreach($poster_query->fetchAll() as $row) {
+                        $poster_name = $row['username'];
+                        $poster_pfp = $row['pfp'];
                         
-                        $content .= "<div id='smallPostContent'>
-                        <a href='profile.php?username=".$posterName."'>
-                            <div id='small_pfp'>
-                                <image src='".$pfp."'></image>
+                        $content .= "<div id='post-content--small'>
+                        <a href='profile.php?id=".$poster_id."'>
+                            <div id='profile-picture--small'>
+                                <image src='".$poster_pfp."'></image>
                             </div>
                         </a>
 
-                        <div id='topicInfo'>
-                            <a href='topic.php?id=".$topic_id."' id='topicTitle'>".$topicName."</a><br>
-                            <a href='profile.php?username=".$posterName."' id='topicPoster'>".$posterName."</a> | 
-                            <span id='date'>".date("n/j/y, g:i A", $topicDate)."
-                            <br>Replies: ".$topicReplies."</span>
+                        <div id='topic-post__info'>
+                            <a href='topic.php?id=".$topic_id."' id='topic-post__title'>".$topic_name."</a><br>
+                            <a href='profile.php?id=".$poster_id."' id='topic-post__poster'>".$poster_name."</a> | 
+                            <span id='post__date'>".date("n/j/y, g:i A", $topic_date)."
+                            <br>Replies: ".$topic_replies." | Reputation: ".$topic_rep."</span>
                         </div>
                         </div>";
                     }
@@ -99,7 +106,10 @@
             } else {
                 //head to this please i'm too lazy to print 404 not found everytime
                 header("Location: 404.html");
-            } 
+            }
+        } catch (Exception $e) {
+            die($e);
+        }
             ?> 
         </div>
     </body>

@@ -1,6 +1,7 @@
-<?php 
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
 //get the rank of the user using the value stored in $row['rank']
-function getRank($r) {
+function convertRankToTitle($r) {
 
     //initalize variable that will be returned when this function is executed
     $return = "";
@@ -28,5 +29,27 @@ function getRank($r) {
 
     //return the value 
     return $return;
+}
+
+//function that sets up phpmailer to send the user an email
+function emailUser($user_email, $subject, $body) {
+    require('vendor/autoload.php'); //include require statements in the functions themselves
+
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'chronosforums@gmail.com';
+    $mail->Password = 'egeereskrkhqlccy';
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port = 465;
+
+    $mail->setFrom('chronosforums@gmail.com');
+    $mail->addAddress($user_email);
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $body;
+
+    $mail->send() or die('Could not send mail. Contact the owner if this keeps happening:'.$mail->ErrorInfo);
 }
 ?>

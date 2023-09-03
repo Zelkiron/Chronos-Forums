@@ -1,3 +1,9 @@
+<?php 
+session_start();
+require("connect.php");
+require("functions.php");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -13,39 +19,54 @@
 
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
             <br>
         <div class='container'>
-            <?php 
-            require("connect.php");
-            require("functions.php");
-
+            <?php
+            try {
             if(isset($_GET['id'])) {
-                $profile_id = htmlspecialchars($_GET['id']);
+                $url_profile_id = htmlspecialchars($_GET['id']);
 
-                $userQuery = $pdo->prepare("SELECT * FROM users WHERE id = :i");
-                $userQuery->bindParam('u', $profile_id);
-                $userQuery->execute();
+                $check_if_user_exists_query = $pdo->prepare("SELECT * FROM users WHERE id = :i");
+                $check_if_user_exists_query->bindParam('i', $url_profile_id);
+                $check_if_user_exists_query->execute();
 
-                if ($profile_id == $_SESSION['id']) {
-                    $
+                if($check_if_user_exists_query->rowCount() == 0) {
+                    header('Location: 404.html');
                 }
-                switch (true) {
-                    case ($userQuery->rowCount() == 0):
+
+                if($url_profile_id == $_SESSION['id']) {
+                    echo 'Welcome to your profile, '.$_SESSION['username'].'! This is currently a work in progress.';
+                }
+
+                foreach ($check_if_user_exists_query->fetchAll() as $row) {
+                    $db_username = $row['username'];
+                    echo 'This is '.$db_username.'\'s profile.';
+                }
+
+                //i think i had plans with this switch, which is why i will keep it here for now 
+                //but i may delete later (i added the default case later on when i realized that was the reason the code was breaking)
+                /* switch (true) {
+                    case ($check_if_user_exists_query->rowCount() == 0):
                         header("Location: 404.html");
-                }
+                    default:
+                        die('L');
+                } */
 
             } else {
                 header("Location: 404.html");
             } 
+        } catch (Exception $e) {
+            die($e);
+        }
             ?>
         </div>
     </body>

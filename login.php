@@ -13,66 +13,71 @@
     </head>
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
         </div>
         <br>
-        <div class='container'>
-            <span class='title introTitle'>Login</span>
+        <div class='container container--center'>
+            <span class='container__main-header'>Login</span>
             <form method='post'>
-                <input type='text' class='acc' name='username' placeholder='Username' required autofocus><br>
-                <input type='password' class='acc' name='password' placeholder='Password' required><br>
+                <input type='text' class='default-input' name='username' placeholder='Username' required autofocus><br>
+                <input type='password' class='default-input' name='password' placeholder='Password' required><br>
                 <input type ='submit' class='button' name='submit' value='Login'><br>
                 <a href='forgot.php'>Forgot your password?</a><br>
                 <a href='forgot.php'>Forgot your username?</a><br>
             </form>
             <?php 
             require('connect.php');
+            try {
             if(isset($_POST['submit'])) {
                 $username = trim($_POST['username']);
                 $password = $_POST['password'];
-                $query = $pdo->prepare('SELECT * FROM users WHERE username = :u');
-                $query->bindParam('u', $username);
-                $query->execute();
-                foreach($query->fetchAll() as $row) {
-                    $rowUser = $row['username'];
-                    $row_id = $row['id'];
-                    $row_pass = $row['password'];
-                    $rank = $row['rank'];
+                $user_query = $pdo->prepare('SELECT * FROM users WHERE username = :u');
+                $user_query->bindParam('u', $username);
+                $user_query->execute();
+                foreach($user_query->fetchAll() as $row) {
+                    $db_username = $row['username'];
+                    $db_id = $row['id'];
+                    $db_password = $row['password'];
+                    $db_rank = $row['rank'];
                 }
                 switch (true) {
                     case (empty($username) || empty($password)): 
                         session_destroy();
                         die('One or more of the required fields were not properly filled out.');
-                    case ($query->rowCount() == 0 || password_verify($password, $row_pass) == 0):
+                    case ($user_query->rowCount() == 0 || password_verify($password, $db_password) == 0):
                         session_destroy();
                         die('Invalid username/password.');
-                    case ($rank == -1):
+                    case ($db_rank == -1):
                         session_destroy();
                         die('Your account has been banned.');
-                    case ($rank == 0):
+                    case ($db_rank == 0):
                         session_destroy();
                         die('Your account has not yet been activated. Check your email for the activation link.');
                     default:
-                        $_SESSION['name'] = $rowUser;
-                        $_SESSION['id'] = $row_id;
+                        $_SESSION['username'] = $db_username;
+                        $_SESSION['id'] = $db_id;
+                        $_SESSION['rank'] = $db_rank;
                         header('Location: index.php');
                 }
                 
             }
             if(isset($_SESSION['id'])) {
-                die('<style> form { display: none; } </style><br>You are already logged in as <b>'.$_SESSION['name'].'</b>.');
+                die('<style> form { display: none; } </style><br>You are already logged in as <b>'.$_SESSION['username'].'</b>.');
             }
+        } catch (Exception $e) {
+            die($e);
+        }
             ?>
         </div>
     </body>
 </html>
 
-<!-- $_SESSION['name'] = $rowUser;
-$_SESSION['id'] = $row_id;
+<!-- $_SESSION['name'] = $db_username;
+$_SESSION['id'] = $db_id;
 header('Location: index.php'); -->

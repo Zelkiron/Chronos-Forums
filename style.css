@@ -8,24 +8,6 @@ body {
     background-size: cover;
 }
 
-/* shouldn't title be in header?
-it's here so the order of .title .introTitle doesn't get messed up */
-
-.title {
-    font-family: 'Kdam Thmor Pro', sans-serif;
-    color: white;
-    font-size: 50px;
-    margin-right: 20px;
-}
-
-.introTitle {
-    font-size: 40px;
-    color: #255893;
-    text-align: center !important;
-    margin: inherit;
-    display: inline-block;
-}
-
 .container {
     border-style: groove;
     border-width: 2px;
@@ -36,14 +18,36 @@ it's here so the order of .title .introTitle doesn't get messed up */
     border-radius: 5px;
     font-family: sans-serif;
     margin: 20px auto;
-    text-align: center;
     color: black;
     position: relative;
-    min-width: 30%;
+    min-width: 20%;
     max-width: fit-content;
 }
 
-.bigPage {
+.container--center {
+    text-align: center;
+}
+
+.container__main-header {
+    font-family: 'Kdam Thmor Pro', sans-serif;
+    color: #255893;
+    margin: inherit;
+    display: inline-block;
+    font-size: 40px;
+}
+
+/* shouldn't title be in header?
+it's here so the order of header__title .container__main-header doesn't get messed up */
+
+.sub-title {
+    font-size: 30px;
+}
+
+.reg-page {
+    text-align: left;
+}
+
+.big-page {
     min-width: 95%;
     text-align: left;
 }
@@ -56,7 +60,15 @@ it's here so the order of .title .introTitle doesn't get messed up */
     margin: 20px;
 }
 
-#headerLink {
+.header__title {
+    font-family: 'Kdam Thmor Pro', sans-serif;
+    color: white;
+    font-size: 50px;
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+#header__links {
     margin: auto;
     background-color: #255893;
     font-family: sans-serif;
@@ -67,18 +79,23 @@ it's here so the order of .title .introTitle doesn't get messed up */
     padding: 20px 20px 20px 20px;
 }
 
-#headerLink:hover {
+#header__links:hover {
     background-color: #fff;
     color: #555599;
 }
 
 /* input */
 
-.acc {
+.default-input {
     height: 25px;
-    margin: 10px;
+    margin: 10px 10px 10px 0px;
     padding: 10px;
     width: 50%;
+}
+
+.reg-page .default-input {
+    height: 15px;
+    width: 200px;
 }
 
 .button {
@@ -95,11 +112,12 @@ it's here so the order of .title .introTitle doesn't get messed up */
 textarea {
     resize: none;
     font-family: inherit;
+    padding: 10px;
 }
 
-/* */
+/* topic poster */
 
-#smallCatBanner {
+#category-banner--small {
     background-color: #255893;
     color: white;
     box-shadow: 2px;
@@ -115,14 +133,14 @@ a {
     display: inline-block;
 }
 
-#big_pfp img {
+#profile-picture--big img {
     border: 1px;
     border-style: solid;
     width: 100px;
     height: 100px;
 }
 
-#small_pfp img {
+#profile-picture--small img {
     border: 1px;
     border-style: solid;
     border-radius: 50%;
@@ -132,7 +150,7 @@ a {
     line-height: 50px;
 }
 
-#smallPostContent {
+#post-content--small {
     border: 1px;
     border-style: groove;
     border-color: gray;
@@ -144,20 +162,20 @@ a {
     overflow: hidden;
 }
 
-#topicInfo {
+#topic-post__info {
     display: inline-block;
     vertical-align: top;
 }
 
-#topicTitle {
+#topic-post__title {
     font-size: 20px;
 }
 
-#topicPoster { 
+#topic-post__poster { 
     font-size: 15px;
 }
 
-#date {
+#post__date {
     font-size: 15px;
 }
 
@@ -197,10 +215,27 @@ a {
     flex-grow: 1;
 }
 
+#mod {
+    color: #05f;
+}
+
+#admin {
+    color: #d11;
+}
+
+#owner {
+    color: #d11;
+    font-weight: 1px;
+}
+
 /* misc or can be used anywhere else */
 
 a:hover {
     color: #99f;
+}
+
+.noticeable {
+    text-decoration: underline;
 }
 
 #catDesc {

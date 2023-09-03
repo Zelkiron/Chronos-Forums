@@ -20,3 +20,10 @@ Visibility ranking:
 3 = only visible to admins+ 
 
 Change visiblity for createTopic for staff categories and stuff.
+
+To-do:
+- set up something in case the user did not get the email for the activation code
+- make a new class for <a>, called noticable. Which will be green or something. Idk. 
+- prevent banned users from logging in
+- memebers page
+- add statuses table in db

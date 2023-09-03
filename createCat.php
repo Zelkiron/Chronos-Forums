@@ -13,14 +13,14 @@
     </head>
     <body>
         <div id='header'>
-            <span class='title'>CHRONOS</span>
-            <a id='headerLink' href='index.php'>Home</a>
-            <a id='headerLink' href='new_posts.php'>Recent Posts</a>
-            <a id='headerLink' href='status_updates.php'>Recent Status Updates</a>
-            <a id='headerLink' href='members.php'>Member List</a>
-            <a id='headerLink' href='staff.php'>Staff List</a>
-            <a id='headerLink' href='about.php'>About Me</a>
-            <a id='headerLink' href='#' onclick='profile()'>Profile</a>
+            <span class='header__title'>CHRONOS</span>
+            <a id='header__links' href='index.php'>Home</a>
+            <a id='header__links' href='new_posts.php'>Recent Posts</a>
+            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
+            <a id='header__links' href='members.php'>Member List</a>
+            <a id='header__links' href='staff.php'>Staff List</a>
+            <a id='header__links' href='about.php'>About Me</a>
+            <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
         <div class='container'>
@@ -40,9 +40,9 @@
                         die('You are not a high enough rank to access this page!');
                     case ($rank == 4): 
                         echo
-                        "<span class='title introTitle'>Create Category</span>
+                        "<span class='container__main-header'>Create Category</span>
                         <form method='post'>
-                        <input type='text' class='acc' name='catName' placeholder='Name' required autofocus><br>
+                        <input type='text' class='default-input' name='catName' placeholder='Name' required autofocus><br>
                         <textarea name='catDesc' placeholder='Description' rows='5' cols='40' required></textarea><br>
                         <select name='visibility' required>
                             <option value='0'>Visibility</option>
