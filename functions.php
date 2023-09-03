@@ -1,34 +1,63 @@
 <?php
+//connects to database
+global $pdo;
+$dsn = "mysql:host=localhost; dbname=forum";
+$pdo = new PDO($dsn, "root", "password");
+if(!($pdo)) {
+    die('Database connection failed. Contact the owner if this keeps happening: '.$pdo->ErrorInfo);
+}
+
+//does a query to see if the user is a high enough rank to see the admin panel (3)
+function checkIfAdmin($user_session_id) {
+    require('connect.php');
+
+    $rank_query = $pdo->prepare("SELECT `rank` FROM users WHERE username = :u");
+    $rank_query->bindParam('u', $user_session_id);
+    $rank_query->execute();
+
+    if($rank_query->rowCount() == 1) {
+        foreach($rank_query->fetchAll() as $row) {
+            $rank = $row['rank'];
+
+            if($rank >= 3) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 //get the rank of the user using the value stored in $row['rank']
 function convertRankToTitle($r) {
 
     //initalize variable that will be returned when this function is executed
-    $return = "";
+    $titleFromRankNumber = "";
 
     //switch case for different possible values (1-4)
     //in the cases, append different possible values of return
 
     // * appending is not necessary, but it's a good habit to have when using foreach loops *
     switch ($r) {
-        case 1:
-            $return .= "<div class='rank' id='normal'>Member</div>";
+        case 1: //normal
+            $titleFromRankNumber .= "<div class='rank' id='normal'>Member</div>";
             break;
-        case 2: 
-            $return .= "<div class='rank' id='mod'>Moderator</div>";
+        case 2: //moderator
+            $titleFromRankNumber .= "<div class='rank' id='mod'>Moderator</div>";
             break;
-        case 3:
-            $return .= "<div class='rank' id='admin'>Admin</div>";
+        case 3: //admin
+            $titleFromRankNumber .= "<div class='rank' id='admin'>Admin</div>";
             break;
-        case 4:
-            $return .= "<div class='rank' id='owner'>Owner</div>";
+        case 4: //owner
+            $titleFromRankNumber .= "<div class='rank' id='owner'>Owner</div>";
             break;
         default: //adding default case just in case something goes wrong
-            $return .= "Invalid rank.";
+            $titleFromRankNumber .= "Invalid rank.";
     }
 
     //return the value 
-    return $return;
+    return $titleFromRankNumber;
 }
 
 //function that sets up phpmailer to send the user an email
@@ -50,6 +79,6 @@ function emailUser($user_email, $subject, $body) {
     $mail->Subject = $subject;
     $mail->Body = $body;
 
-    $mail->send() or die('Could not send mail. Contact the owner if this keeps happening:'.$mail->ErrorInfo);
+    $mail->send() or die('Could not send mail. Contact the owner if this keeps happening: '.$mail->ErrorInfo);
 }
 ?>

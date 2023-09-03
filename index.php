@@ -1,7 +1,6 @@
 <?php 
 require('functions.php');
-session_start(); 
-require('connect.php');
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,19 +25,8 @@ require('connect.php');
             <a id='header__links' href='about.php'>About Me</a>
             <a id='header__links' href='#' onclick='profile()'>Profile</a>
             <?php
-            //doing a query to see if the user is a high enough rank to see the admin panel (3)
-            $rank_query = $pdo->prepare("SELECT `rank` FROM users WHERE username = :u");
-            $rank_query->bindParam('u', $_SESSION['username']);
-            $rank_query->execute();
-
-            if($rank_query->rowCount() == 1) {
-                foreach($rank_query->fetchAll() as $row) {
-                    $rank = $row['rank'];
-
-                    if($rank >= 3) {
-                        echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
-                    }
-                }
+            if(checkIfAdmin($_SESSION['id']) == true) {
+                echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
             }
             ?>
         </div>
