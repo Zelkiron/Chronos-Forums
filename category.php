@@ -26,7 +26,6 @@
         <div class='container big-page'>
             <?php 
             include('connect.php');
-            try {
             if (isset($_GET['cat'])) {
                 //get cat id from url and sanitize just in case to prevent xss attacks
                 $url_cat_id = htmlspecialchars($_GET['cat']);
@@ -107,9 +106,6 @@
                 //head to this please i'm too lazy to print 404 not found everytime
                 header("Location: 404.html");
             }
-        } catch (Exception $e) {
-            die($e);
-        }
             ?> 
         </div>
     </body>
