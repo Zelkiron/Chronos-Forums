@@ -1,4 +1,7 @@
-<?php session_start(); ?>
+<?php 
+require('functions.php');
+session_start(); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -21,6 +24,11 @@
             <a id='header__links' href='staff.php'>Staff List</a>
             <a id='header__links' href='about.php'>About Me</a>
             <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php
+            if(checkIfAdmin($_SESSION['id']) == true) {
+                echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
+            }
+            ?>
         </div>
         <br>
         <div class='container'>
@@ -43,7 +51,7 @@
                         "<span class='container__main-header'>Create Category</span>
                         <form method='post'>
                         <input type='text' class='default-input' name='catName' placeholder='Name' required autofocus><br>
-                        <textarea name='catDesc' placeholder='Description' rows='5' cols='40' required></textarea><br>
+                        <textarea name='category-description' placeholder='Description' rows='5' cols='40' required></textarea><br>
                         <select name='visibility' required>
                             <option value='0'>Visibility</option>
                             <option value='1'>Everyone</option>
@@ -55,7 +63,7 @@
                         </form>";
                         if(isset($_POST['submit'])) {
                             $name = $_POST['catName'];
-                            $desc = $_POST['catDesc'];
+                            $desc = $_POST['category-description'];
                             $rank = $_POST['visibility'];
                             $search = $pdo->prepare('SELECT * FROM categories WHERE name = :n');
                             $search->bindParam('n', $name);

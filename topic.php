@@ -1,6 +1,7 @@
 <?php 
 session_start();
-require('connect.php');
+require('Post.php');
+require('Header.php');
 require('functions.php');
 ?>
 <!DOCTYPE html>
@@ -15,29 +16,18 @@ require('functions.php');
 
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php
+            $header = new Header();
+            echo $header->getHeader();
+            ?>
         </div>
 
             <br>
-        <div class='container big-page'>
+        <div class='container container__big'>
             <?php
-
-            # THERE IS A TRY CATCH HERE #
-            # THERE IS A TRY CATCH HERE #
-            # THERE IS A TRY CATCH HERE #
-            # THERE IS A TRY CATCH HERE #
-
-            try {
             if(isset($_GET['id'])) {
                 //prevent xss attacks
-                $get_id = htmlspecialchars($_GET['id']);
+                $get_topic_id_from_url = htmlspecialchars($_GET['id']);
 
                 //initalize content variable
                 $content = "";
@@ -48,17 +38,20 @@ require('functions.php');
                 # TOPIC POST #
                 ##############
 
+                $category_id = 0;
+
                 //query for topic post information
-                $post_query = $pdo->prepare("SELECT id, poster_id, `name`, content, reputation, date_created, date_edited, replies, is_locked FROM posts WHERE topic_id = :i AND post_order = '1'");
-                $post_query->bindParam('i', $get_id);
-                $post_query->execute();
+                $topic_post_query = $pdo->prepare("SELECT category_id, poster_id, `name`, content, reputation, date_created, date_edited, replies, is_locked, post_order FROM posts WHERE topic_id = :i AND post_order = '1'");
+                $topic_post_query->bindParam('i', $get_topic_id_from_url);
+                $topic_post_query->execute();
 
                 //get all the TOPIC information
-                foreach($post_query->fetchAll() as $row) {
+                foreach($topic_post_query->fetchAll() as $row) {
+                    $category_id = $row['category_id'];
                     $poster = $row['poster_id'];
                     $post_name = $row['name'];
                     $post_content = $row['content'];
-                    $post_rep = $row['rep'];
+                    $post_rep = $row['reputation'];
                     $date_created = $row['date_created'];
                     $date_edited = $row['date_edited'];
                     $replies = $row['replies'];
@@ -70,193 +63,152 @@ require('functions.php');
                 }
 
                 //got id stored in $topic-post__poster var, use for getting info about the OP
-                $posterQuery = $pdo->prepare("SELECT username, profile_picture, `rank`, reputation, posts FROM users WHERE id = :i");
-                $posterQuery->bindParam('i', $poster);
-                $posterQuery->execute();
+                $get_topic_poster_query = $pdo->prepare("SELECT username, profile_picture, `rank`, reputation, number_of_posts FROM users WHERE id = :i");
+                $get_topic_poster_query->bindParam('i', $poster);
+                $get_topic_poster_query->execute();
 
                 //get the rest of the info about the OP
-                foreach($posterQuery->fetchAll() as $row) {
+                foreach($get_topic_poster_query->fetchAll() as $row) {
                     $poster_name = $row['username'];
-                    $posterRank = $row['rank'];
+                    $poster_rank = $row['rank'];
                     $poster_profile_picture = $row['profile_picture'];
-                    $posterRank = $row['rank'];
-                    $posterRep = $row['reputation'];
-                    $posterPosts = $row['posts'];
+                    $poster_reputation = $row['reputation'];
+                    $poster_number_of_posts = $row['number_of_posts'];
                 
                     //now append all the necessary variables to the post 
                     $content .= 
                     "<span class='container__main-header'>".$post_name."</span><br>
                     <div id='post'>
-                        <div id='userInfo'>
+                        <div id='user-information'>
                             <div id='profile-picture--big'>
                                 <image src='".$poster_profile_picture."'></image>
                                 <br>
                                 ".$poster_name."
                                 <br>
-                                ".convertRankToTitle($posterRank)."
-                                ".$posterPosts." posts
+                                ".convertRankToTitle($poster_rank)."
+                                ".$poster_number_of_posts." posts
                                 <br>
-                                ".$posterRep." rep
+                                ".$poster_reputation." reputation
                             </div>
                         </div>
-                        <div id='postContent'>
-                        <span id='topicDate'>Created on ".date("n/j/Y, g:i A", $date_created)." | ".$post_rep." reputation</span><br>
+                        <div id='post-content'>
+                        <span id='topic-date'>Created on ".date("n/j/Y, g:i A", $date_created)." | ".$post_rep." reputation</span><br>
                             ".$post_content."
                         </div>
                     </div> <br>";
                 }
 
-                /* //query for topic post information
-                $topicQuery = $pdo->prepare("SELECT id, poster_id, `name`, content, dateCreated, dateEdited, is_locked FROM posts WHERE id = :i");
-                $topicQuery->bindParam('i', $get_id);
-                $topicQuery->execute();
+                ###########
+                # REPLIES # 
+                # REPLIES #
+                # REPLIES #
+                ###########
 
-                //get all the TOPIC information
-                foreach($topicQuery->fetchAll() as $row) {
-                    $topic-post__poster = $row['poster_id'];
-                    $topicName = $row['name'];
-                    $topicContent = $row['content'];
-                    $topicDate = $row['dateCreated'];
-                    $topicEdited = $row['dateEdited'];
-                    $is_locked = $row['is_locked'];
+                //get all the replies for this topic
+                $get_topic_replies_query = $pdo->prepare("SELECT poster_id, post_order, content, reputation, date_created, date_edited FROM posts WHERE topic_id = :i AND visibility = '1' AND post_order > 1 ORDER BY date_created");
+                $get_topic_replies_query->bindParam('i', $get_topic_id_from_url);
+                $get_topic_replies_query->execute(); 
 
-                    //convert timestamp to integer for date() function
-                    $topicDate = strtotime($topicDate);
-                }
+                //get all the REPLY information
 
-                    //got id stored in $topic-post__poster var, use for getting info about the OP
-                    $posterQuery = $pdo->prepare("SELECT username, pfp, rank FROM users WHERE id = :i");
-                    $posterQuery->bindParam('i', $topic-post__poster);
-                    $posterQuery->execute();
+                ## IMPORTANT ##
+                //NEST ALL THIS INTO THE REPLY FOREACH BECAUSE WE ARE LOOPING AROUND ALL THE POSSIBLE REPLIES
+
+                $most_recent_post_order = 1;
+
+                foreach($get_topic_replies_query->fetchAll() as $row) {
+                    $reply_poster = $row['poster_id'];
+                    $reply_post_order = $row['post_order'];
+                    $reply_content = $row['content'];
+                    $reply_reputation = $row['reputation'];
+                    $reply_date_created = $row['date_created'];
+                    $reply_last_edited = $row['date_edited'];
+
+                    $most_recent_post_order = max($most_recent_post_order, $reply_post_order);
+
+                    //set replydate to int 
+                    $reply_date_created = strtotime($reply_date_created);
+                
+                    $reply_poster_query = $pdo->prepare("SELECT id, username, profile_picture, `rank`, reputation, number_of_posts FROM users WHERE id = :i");
+                    $reply_poster_query->bindParam('i', $reply_poster);
+                    $reply_poster_query->execute();
 
                     //get the rest of the info about the OP
-                    foreach($posterQuery->fetchAll() as $row) {
-                        $poster_name = $row['username'];
-                        $posterRank = $row['rank'];
-                        $poster_profile_picture = $row['pfp'];
-                        $posterRank = $row['rank'];
-                    
+                    foreach($reply_poster_query->fetchAll() as $row) {
+                        $reply_poster_id = $row['id'];
+                        $reply_poster_name = $row['username'];
+                        $reply_poster_rank = $row['rank'];
+                        $reply_poster_profile_picture = $row['profile_picture'];
+                        $reply_poster_reputation = $row['reputation'];
+                        $reply_poster_number_of_posts = $row['number_of_posts'];
+                        
                         //now append all the necessary variables to the post 
-                        $content .= 
-                        "<span class='container__main-header'>".$topicName."</span><br>
-                        <div id='post'>
-                            <div id='userInfo'>
-                                <div id='big_pfp'>
-                                    <image src='".$poster_profile_picture."'></image>
-                                    <br>
-                                    ".$poster_name."
-                                    <br>
-                                    ".getRank($posterRank)."
-                                </div>
-                            </div>
-                            <div id='postContent'>
-                            <span id='topicDate'>Created on ".date("n/j/y, g:i A", $topicDate)."</span><br>
-                                ".$topicContent."
-                            </div>
-                        </div> <br>";
-                    } 
-
-                    ###########
-                    # REPLIES # 
-                    # REPLIES #
-                    # REPLIES #
-                    ###########
-
-                    //get all the replies for this topic
-                    $replyQuery = $pdo->prepare("SELECT poster_id, content, rep, dateCreated, dateEdited FROM replies WHERE topic_id = :i AND visibility = '1' ORDER BY dateCreated");
-                    $replyQuery->bindParam('i', $get_id);
-                    $replyQuery->execute(); 
-
-                    //get all the REPLY information
-
-                    ## IMPORTANT ##
-                    //NEST ALL THIS INTO THE REPLY FOREACH BECAUSE WE ARE LOOPING AROUND ALL THE POSSIBLE REPLIES
-
-                    foreach($replyQuery->fetchAll() as $row) {
-                        $replyPoster = $row['poster_id'];
-                        $replyContent = $row['content'];
-                        $replyRep = $row['rep'];
-                        $replyDate = $row['dateCreated'];
-                        $replyEdited = $row['dateEdited'];
-
-                        //set replydate to int 
-                        $replyDate = strtotime($replyDate);
-                    
-                        $rPosterQuery = $pdo->prepare("SELECT username, pfp, rank FROM users WHERE id = :i");
-                        $rPosterQuery->bindParam('i', $replyPoster);
-                        $rPosterQuery->execute();
-
-                        //get the rest of the info about the OP
-                        foreach($rPosterQuery->fetchAll() as $row) {
-                            $rPosterName = $row['username'];
-                            $rPosterRank = $row['rank'];
-                            $rposter_profile_picture = $row['pfp'];
-                            $rPosterRank = $row['rank'];
-                            
-                            //now append all the necessary variables to the post 
-                            $content .=
-                            "<div id='post'>
-                                <div id='userInfo'>
-                                    <div id='big_pfp'>
-                                        <image src='".$rposter_profile_picture."'></image>
-                                        <br>
-                                        ".$rPosterName."
-                                        <br>
-                                        ".getRank($rPosterRank)."
+                        $content .=
+                        "<div id='post'>
+                            <div id='user-information'>
+                                <a href='profile.php?id=".$reply_poster_id."'>
+                                    <div id='profile-picture--big'>
+                                        <image src='".$reply_poster_profile_picture."'></image>
                                     </div>
+                                    <br>
+                                    ".$reply_poster_name."
+                                </a>
+                                <br>
+                                ".convertRankToTitle($reply_poster_rank)."
+                                ".$reply_poster_number_of_posts." posts
+                                <br>
+                                ".$reply_poster_reputation." reputation
+                            </div>
+                            <div id='post-content'>
+                                <span id='topic-date'>Created on ".date("n/j/Y, g:i A", $reply_date_created)."</span><br>
+                                    ".$reply_content."
+                                <hr>
+                                <div id='post__footer'>
+                                    ".$reply_reputation." reputation | 
                                 </div>
-                                <div id='postContent'>
-                                    <span id='topicDate'>Created on ".date("n/j/y, g:i A", $replyDate)."</span><br>
-                                    ".$replyContent."
-                                </div>
-                            </div> <br>";
-                        }
+                            </div>
+                        </div> 
+                        <br>";
                     }
+                }
 
-                    ################
-                    # SUBMIT REPLY #
-                    # SUBMIT REPLY #  
-                    # SUBMIT REPLY #
-                    ################
+                ################
+                # SUBMIT REPLY #
+                # SUBMIT REPLY #  
+                # SUBMIT REPLY #
+                ################
 
-                    //see if the topic is locked, if not show reply box if user is logged in 
-                    if($is_locked == 1) {
-                        $content .= "<br>This topic is currently locked and not accepting replies.";
-                    } else {
-                        if(isset($_SESSION['id'])) {
-                            //echo the form so the user can post a reply
-                            $content .= 
-                            "<br><br><form method='post'>
-                            <textarea name='content' placeholder='Tell the world what you have to say!'
-                            rows='10' cols='100' required></textarea><br><br>
-                            <input type='submit' name='submit' value='Create Post'></form>";
-                            if(isset($_POST['submit'])) {
+                //see if the topic is locked, if not show reply box if user is logged in 
+                if($is_locked == 1) {
+                    $content .= "<br>This topic is currently locked and not accepting replies.";
+                } else {
+                    if(isset($_SESSION['id'])) {
+                        //echo the form so the user can post a reply
+                        $content .= 
+                        "<form method='post'>
+                        <textarea name='content' placeholder='Tell the world what you have to say!'
+                        rows='10' cols='100' required></textarea><br>
+                        <input type='submit' name='submit' class='button' value='Create Post'></form>";
+                        if(isset($_POST['submit'])) {
+                            //update post order
+                            $most_recent_post_order += 1;
 
-                                //get content
-                                $postContent = $_POST['content'];
+                            //get content
+                            $post_content = $_POST['content']; 
 
-                                //prepare query for inserting reply
-                                $post_query = $pdo->prepare("INSERT INTO replies (topic_id, poster_id, content, rep, dateCreated) VALUES (:t, :p, :c, '0', now())");
-                                $post_query->bindParam('t', $get_id);
-                                $post_query->bindParam('p', $_SESSION['id']);
-                                $post_query->bindParam('c', $postContent);
-                                $post_query->execute();
-
-                                //refresh the page so the user can see the reply
-                                header("Refresh: 0");
-                            }
-                        } else {
-                            $content .= "<br>You need to be <a href='login.php'>logged in</a> to post a reply.";
+                            $post = new Post('1', $get_topic_id_from_url, $_SESSION['id'], $most_recent_post_order, $post_content);
+                            $post->createPost();
+                            header('Location: topic.php?id='.$get_topic_id_from_url.'');
                         }
-                    } */
+                    } else {
+                        $content .= "<br>You need to be <a href='login.php'>logged in</a> to post a reply.";
+                    }
+                } 
                 //now show what we have stored in $content so far
                 echo $content;
             } else {
                 //redirect to 404 page 
                 header("Location: 404.html");
-            }
-            } catch (Exception $e) {
-                die($e);
             }
             ?>
         </div>

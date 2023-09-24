@@ -19,12 +19,12 @@
             <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
-        <div class='container big-page'>
+        <div class='container container__big'>
 
             <span class='container__main-header'>Topic Name</span><br>
 
             <div id='post'>
-                <div id='userInfo'>
+                <div id='user-information'>
                     <div id='big_pfp'>
                         <image src='https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png'></image>
                     </div>
@@ -34,7 +34,7 @@
                         Bruh Moment
                 </div>
 
-                <div id='postContent'>
+                <div id='post-content'>
                 Never gonna give you up <br>
                 Never gonna let you down <br>
                 Never gonna run around and desert you <br> 

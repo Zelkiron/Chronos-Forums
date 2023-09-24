@@ -1,1 +1,1 @@
-alter table categories rename column `desc` to `description`;
+update users set `rank` = 4 where id = 1

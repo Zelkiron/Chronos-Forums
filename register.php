@@ -1,5 +1,5 @@
 <?php 
-require('connect.php'); 
+require('Header.php'); 
 require('functions.php');
 ?>
 <!DOCTYPE html>
@@ -17,21 +17,16 @@ require('functions.php');
 
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
+            <?php
+            $header = new Header();
+            echo $header->getHeader();
+            ?>
         </div>
 
         <br>
 
         <div class='container container--center'>
-            <!--<span class='container__main-header'>Register</span>-->
-            <h1 class='container__main-header'>Register</h1>
+            <span class='container__main-header'>Register</span>
 
             <form method='post'>
                 <input type='email' class='default-input' name='email' placeholder='john@example.com' required autofocus><br>
@@ -41,7 +36,6 @@ require('functions.php');
             </form>
 
             <?php
-            try {
             if(isset($_POST['submit'])){
                 //grabbing the details from the form
                 $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL); //here to prevent sql injections and make sure the email is valid
@@ -52,6 +46,14 @@ require('functions.php');
                 $existing_account_query->bindParam('u', $username);
                 $existing_account_query->bindParam('e', $email);
                 $existing_account_query->execute();
+
+                foreach($existing_account_query->fetchAll() as $row) {
+                    $db_username = $row['username'];
+                    $db_email = $row['email'];
+                    if ($db_username == $username || $db_email == $email) {
+                        die('This username/email is already in use.');
+                    }
+                }
 
                 //switch statement to make sure that the user does not get any of these cases
                 //hence the switch(true), if the user gets any of them true, the code will go straight to that case
@@ -73,23 +75,21 @@ require('functions.php');
                     case (!ctype_alnum($username)):
                         die('Your username should only be letters and numbers.');
 
-                    case ($existing_account_query->rowCount() == 1):
-                        die('This username/email is already in use.');
-
                     default: 
                         //the user will be emailed the unhashed activation code
                         //when they click on the link in the email, if the unhashed activation code matches with the hashed activation code retrieved from the database, the user will be activated
                         $unhashed_activation_code = bin2hex(random_bytes(16));
-                        $hashed_activation_code = password_hash($hashed_activation_code, PASSWORD_DEFAULT); //using password_hash here for password_verify in activate.php, adds a layer of security
+                        $hashed_activation_code = password_hash($unhashed_activation_code, PASSWORD_DEFAULT); //using password_hash here for password_verify in activate.php, adds a layer of security
                         
-                        $register_user_query = $pdo->prepare('INSERT INTO users (email, username, `password`, `rank`, date_created, activation_code) VALUES (:email, :user, :pass, :r, now(), :code)');
+                        $register_user_query = $pdo->prepare('INSERT INTO users (email, username, `password`, `rank`, date_created, activation_code, profile_picture) VALUES (:email, :username, :pass, :user_rank, now(), :activation_code, :profile_picture)');
                         $password = password_hash($password, PASSWORD_DEFAULT);
 
                         $register_user_query->bindParam('email', $email);
-                        $register_user_query->bindParam('user', $username);
+                        $register_user_query->bindParam('username', $username);
                         $register_user_query->bindParam('pass', $password);
-                        $register_user_query->bindValue('r', 0);
-                        $register_user_query->bindValue('code', $hashed_activation_code);
+                        $register_user_query->bindValue('user_rank', 0);
+                        $register_user_query->bindParam('activation_code', $hashed_activation_code);
+                        $register_user_query->bindValue('profile_picture', 'https://static.vecteezy.com/system/resources/previews/009/342/688/original/clock-icon-clipart-design-illustration-free-png.png');
 
                         //setting up the email to send to the user
                         //the phpmailer setup is in functions.php which is why i required it in this file
@@ -105,18 +105,18 @@ require('functions.php');
                         We hope you will have a great time here!<br><br>
                         </body>
                         </html>";
-                        emailUser($email, $subject, $body);
 
-                        $register_user_query->execute();
-                        echo 'Congratulations on creating your account, '.$username.'!<br>
-                        To complete the last step of the registration process, check your email.<br>
-                        Just in case, check your spam folder and unmark the email as spam to be able to click on the link.<br>
-                        If you did not get an email for your activation code, you can try again <a href="reactivate.php" class="noticeable">here.</a>';
+                        if($register_user_query->execute()) {
+                            emailUser($email, $subject, $body);
+                            echo 'Congratulations on creating your account, '.$username.'!<br>
+                            To complete the last step of the registration process, check your email.<br>
+                            Just in case, check your spam folder and unmark the email as spam to be able to click on the link.<br>
+                            If you did not get an email for your activation code, you can try again <a href="reactivate.php" class="noticeable-link">here.</a>';
+                        } else {
+                            die('Something went wrong. Please try again later.');
+                        }
                 }
-            }  
-        } catch (Exception $e) {
-            die($e); //catch any exception that occurs while modifying this file
-        } 
+            }
             ?>
         </div>
     </body>

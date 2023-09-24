@@ -1,5 +1,6 @@
 <?php 
 require('functions.php');
+require('Header.php');
 session_start();
 ?>
 <!DOCTYPE html>
@@ -16,30 +17,21 @@ session_start();
     </head>
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
             <?php
-            if(checkIfAdmin($_SESSION['id']) == true) {
-                echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
-            }
+            $header = new Header();
+            echo $header->getHeader();
             ?>
         </div>
 
         <br>
 
-        <div class='container big-page'>
+        <div class='container container__big'>
             <?php
             //welcome the user to the forum if they are logged in or not regardless
             if(isset($_SESSION['id'])) {
-                echo 'Welcome to the forums, '.$_SESSION['username'].'!';
+                echo '<h3>Welcome to the forums, '.$_SESSION['username'].'!</h3>';
             } else {
-                echo 'Welcome to the forums, Guest! <a class="noticeable" href="login.php">Click here</a> to login.';
+                echo 'Welcome to the forums, Guest! <a class="noticeable-link" href="login.php">Click here</a> to login. <br>';
             }
 
             //get the name and id of the category itself (category id will be used in topic query)
@@ -61,7 +53,7 @@ session_start();
                 </div>";
 
                 //get info for topic
-                $topic_query = $pdo->prepare("SELECT id, poster_id, `name`, date_new_reply FROM posts WHERE category_id = :i AND post_order = '1' AND visibility = '1' ORDER BY date_new_reply DESC LIMIT 1");
+                $topic_query = $pdo->prepare("SELECT topic_id, poster_id, `name`, date_new_reply, replies FROM posts WHERE category_id = :i AND post_order = '1' AND visibility = '1' ORDER BY date_new_reply DESC LIMIT 1");
                 $topic_query->bindParam('i', $category_id);
                 $topic_query->execute();
                 
@@ -73,36 +65,36 @@ session_start();
                 }
 
                 foreach ($topic_query->fetchAll() as $row) {
-                    $topic_id = $row['id'];
+                    $topic_id = $row['topic_id'];
                     $poster_id = $row['poster_id'];
                     $topic_name = $row['name'];
                     $last_reply = $row['date_new_reply'];
                     $last_reply = strtotime($last_reply);
                     $replies = $row['replies'];
 
-                    $poster_query = $pdo->prepare("SELECT * FROM users WHERE id = :i");
+                    $poster_query = $pdo->prepare("SELECT `id`, `username`, `profile_picture` FROM users WHERE id = :i");
                     $poster_query->bindParam('i', $poster_id);
                     $poster_query->execute();
 
                     foreach($poster_query->fetchAll() as $row) {
                         $poster_id = $row['id'];
                         $poster_name = $row['username'];
-                        $pfp = $row['pfp'];
+                        $profile_picture = $row['profile_picture'];
 
                         $content .= 
                         "<div id='post-content--small'>
-                        <a href='profile.php?id=".$poster_id."'>
-                            <div id='profile-picture--small'>
-                                <image src='".$pfp."'></image>
-                            </div>
-                        </a>
+                            <a href='profile.php?id=".$poster_id."'>
+                                <div id='profile-picture--small'>
+                                    <image src='".$profile_picture."'></image>
+                                </div>
+                            </a>
 
-                        <div id='topic-post__info'>
-                            <a href='topic.php?id=".$topic_id."' id='topic-post__title'>".$topic_name."</a><br>
-                            <a href='profile.php?id=".$poster_id."' id='topic-post__poster'>".$poster_name."</a> | 
-                            <span id='post__date'>".date("n/j/y, g:i A", $last_reply)."
-                            <br>Replies: ".$replies."</span>
-                        </div>
+                            <div id='topic-post__info'>
+                                <a href='topic.php?id=".$topic_id."' id='topic-post__title'>".$topic_name."</a><br>
+                                <a href='profile.php?id=".$poster_id."' id='topic-post__poster'>".$poster_name."</a> | 
+                                <span id='post__date'>".date("n/j/y, g:i A", $last_reply)."
+                                <br>Replies: ".$replies."</span>
+                            </div>
                         </div>";
                     }
                 }

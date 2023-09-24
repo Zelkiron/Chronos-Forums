@@ -22,7 +22,7 @@
             <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
-        <div class='container big-page'>
+        <div class='container container__big'>
             <p class='container__main-header'>About Me</p>
             I am an aspiring web developer. I created this page in June of 2022. 
             This whole forum is a part of my portfolio that I am going to show to prospective employers. 

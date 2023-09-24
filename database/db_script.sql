@@ -21,14 +21,14 @@ CREATE TABLE `posts` (
   `topic_id` int(11) NOT NULL,
   `poster_id` int(11) NOT NULL,
   `post_order` int(11) NOT NULL DEFAULT 1,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(100) NULL DEFAULT NULL,
   `content` text NOT NULL,
   `reputation` int(11) NOT NULL DEFAULT 0,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `date_edited` timestamp NULL DEFAULT NULL,
-  `date_new_reply` timestamp NOT NULL DEFAULT current_timestamp(),
+  `date_new_reply` timestamp NULL DEFAULT NULL,
   `replies` int(11) NOT NULL DEFAULT 0,
-  `visibility` tinyint(1) NOT NULL,
+  `visibility` tinyint(1) NOT NULL DEFAULT 1,
   `is_locked` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
@@ -38,16 +38,16 @@ CREATE TABLE `status_updates` (
   `content` text NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `date_edited` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `visibility` tinyint(1) NOT NULL,
-  `is_locked` tinyint(1) NOT NULL,
+  `visibility` tinyint(1) NOT NULL DEFAULT 1,
+  `is_locked` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `topics` int(11) NOT NULL,
-  `posts` int(11) NOT NULL,
-  `visibility` tinyint(4) NOT NULL,
+  `topics` int(11) NOT NULL DEFAULT 0,
+  `posts` int(11) NOT NULL DEFAULT 0,
+  `visibility` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;

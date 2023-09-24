@@ -40,6 +40,12 @@ function convertRankToTitle($r) {
 
     // * appending is not necessary, but it's a good habit to have when using foreach loops *
     switch ($r) {
+        case -1:
+            $titleFromRankNumber .= "<div class='rank' id='banned'>Banned</div>";
+            break;
+        case 0: //account that not been activated from email yet
+            $titleFromRankNumber .= "<div class='rank'>Not Activated</div>";
+            break;
         case 1: //normal
             $titleFromRankNumber .= "<div class='rank' id='normal'>Member</div>";
             break;
@@ -53,7 +59,7 @@ function convertRankToTitle($r) {
             $titleFromRankNumber .= "<div class='rank' id='owner'>Owner</div>";
             break;
         default: //adding default case just in case something goes wrong
-            $titleFromRankNumber .= "Invalid rank.";
+            $titleFromRankNumber .= "<div class='rank'>Invalid Rank</div>";
     }
 
     //return the value 

@@ -47,7 +47,7 @@ it's here so the order of header__title .container__main-header doesn't get mess
     text-align: left;
 }
 
-.big-page {
+.container__big {
     min-width: 95%;
     text-align: left;
 }
@@ -136,6 +136,7 @@ a {
 #profile-picture--big img {
     border: 1px;
     border-style: solid;
+    border-radius: 50%;
     width: 100px;
     height: 100px;
 }
@@ -184,11 +185,11 @@ a {
     width: 200px;
 }
 
-#postContent {
+#post-content {
     display: inline-block;
 }
 
-#post {
+#post { /* what am i doing here */
     height: 100px;
 
 }
@@ -202,17 +203,22 @@ a {
     display: flex;
 }
 
-#userInfo {
+#user-information {
     display: inline-block;
     padding: 10px;
     text-align: center;
 }
 
-#postContent {
+#post-content {
     border-left: 1px solid;
     vertical-align: top;
     padding: 10px;
     flex-grow: 1;
+}
+
+#banned {
+    text-decoration: line-through;
+    color: #555;
 }
 
 #mod {
@@ -234,17 +240,38 @@ a:hover {
     color: #99f;
 }
 
-.noticeable {
+.noticeable-link {
     text-decoration: underline;
 }
 
-#catDesc {
+#category-description {
     font-size: 25px;
 }
 
-#topicDate {
+#topic-date {
     font-size: 15px;
     border-bottom: 1px solid;
     display: block;
     padding-bottom: 10px;
+}
+
+#member-list {
+    border: 1px;
+    border-style: groove;
+    border-color: gray;
+    min-height: 50px;
+    padding: 9px;
+    max-width: 90%;
+    margin-bottom: 20px;
+    vertical-align: center;
+    overflow: hidden;
+}
+
+#member-list__username {
+    font-size: 20px;
+}
+
+#member-list__member-info {
+    display: inline-block;
+    vertical-align: top;
 }

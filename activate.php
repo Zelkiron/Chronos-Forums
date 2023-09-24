@@ -1,5 +1,6 @@
 <?php
 require('connect.php');
+require('Header.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,18 +16,15 @@ require('connect.php');
     </head>
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php 
+            $header = new Header();
+            echo $header->getHeader();
+            ?>
         </div>
         <br>
-        <div class='container'>
-
+        <div class='container container--center'>
+            <span class='container__main-header'>Activate Your Account</span>
+            <br>
             <?php
             //check if there are values set for the email and code variables in the url, if not, then redirect them to 404 not found page
             if(isset($_GET['email'], $_GET['code'])) {
@@ -35,7 +33,7 @@ require('connect.php');
 
                 //get the activation code of the user stored in the db
                 //no need to get the rank as well because the activation code in db and activation code in the get request will not be equal to each other anyways
-                $get_activation_code_query = $pdo->prepare('SELECT activation_code, FROM users WHERE email = :e');
+                $get_activation_code_query = $pdo->prepare('SELECT activation_code FROM users WHERE email = :e');
                 $get_activation_code_query->bindParam('e', $email_from_url);
                 $get_activation_code_query->execute();
 
@@ -47,7 +45,7 @@ require('connect.php');
                     switch (true) {
                         case (!(password_verify($code_from_url, $db_activation_code))):
                             //header('Location: 404.html');
-                            die("Invalid activation code.");
+                            die("Invalid activation code. <br> Lost your previous activation code? <a href='reactivate.php' class='noticeable-link'>Get a new one.</a>");
 
                         default: //activates the account by setting the rank to 1 (normal) and getting rid of the activation code
                             $activate_account_query = $pdo->prepare('UPDATE users SET `rank` = :r, `activation_code` = :a WHERE `email` = :e');
@@ -55,8 +53,8 @@ require('connect.php');
                             $activate_account_query->bindValue('a', '');
                             $activate_account_query->bindParam('e', $email_from_url);
                             $activate_account_query->execute();
-                            echo 'Congratulations, your account has been successfully activated! Would you like to 
-                            <a href="login.php">login</a> now?';
+                            echo 'Congratulations, your account has been successfully activated!<br>
+                            <a href="login.php" class="noticeable-link">Would you like to login</a> now?';
                     }
                 } else {
                     //if the email given is not associated with an existing account, redirect to the 404 page

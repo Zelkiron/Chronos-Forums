@@ -29,11 +29,12 @@
                 <input type='password' class='default-input' name='password' placeholder='Password' required><br>
                 <input type ='submit' class='button' name='submit' value='Login'><br>
                 <a href='forgot.php'>Forgot your password?</a><br>
-                <a href='forgot.php'>Forgot your username?</a><br>
+                <a href='forgot.php'>Forgot your username?</a><br><br>
+                If you don't have an account, please <a href='register.php' class='noticeable-link'>register</a> for one here. <br><br>
+                Lost your previous activation code? <a href='reactivate.php' class='noticeable-link'>Get a new one.</a>
             </form>
             <?php 
             require('connect.php');
-            try {
             if(isset($_POST['submit'])) {
                 $username = trim($_POST['username']);
                 $password = $_POST['password'];
@@ -70,14 +71,7 @@
             if(isset($_SESSION['id'])) {
                 die('<style> form { display: none; } </style><br>You are already logged in as <b>'.$_SESSION['username'].'</b>.');
             }
-        } catch (Exception $e) {
-            die($e);
-        }
             ?>
         </div>
     </body>
 </html>
-
-<!-- $_SESSION['name'] = $db_username;
-$_SESSION['id'] = $db_id;
-header('Location: index.php'); -->

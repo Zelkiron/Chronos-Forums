@@ -1,6 +1,5 @@
 <?php 
 session_start();
-require("connect.php");
 require("functions.php");
 ?>
 
@@ -27,6 +26,11 @@ require("functions.php");
             <a id='header__links' href='staff.php'>Staff List</a>
             <a id='header__links' href='about.php'>About Me</a>
             <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php
+            if(checkIfAdmin($_SESSION['id']) == true) {
+                echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
+            }
+            ?>
         </div>
             <br>
         <div class='container'>
