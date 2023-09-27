@@ -19,9 +19,9 @@
             <a id='header__links' href='#' onclick='profile()'>Profile</a>
         </div>
         <br>
-        <div class='container container__big'>
+        <div class='container container--big'>
 
-            <span class='container__main-header'>Topic Name</span><br>
+            <span class='container__main-title'>Topic Name</span><br>
 
             <div id='post'>
                 <div id='user-information'>

@@ -23,8 +23,8 @@ require('Header.php');
             ?>
         </div>
         <br>
-        <div class='container container__big'>
-            <span class='container__main-header'>Create Topic</span><br>
+        <div class='container container--big'>
+            <span class='container__main-title'>Create Topic</span><br>
             <?php 
             include('connect.php');
             if(isset($_SESSION['id'])) {

@@ -23,7 +23,7 @@ require('Header.php');
         </div>
         <br>
         <div class='container container--center'>
-            <span class='container__main-header'>Activate Your Account</span>
+            <span class='container__main-title'>Activate Your Account</span>
             <br>
             <?php
             //check if there are values set for the email and code variables in the url, if not, then redirect them to 404 not found page
@@ -44,7 +44,7 @@ require('Header.php');
                 if($get_activation_code_query->rowCount() == 1) {
                     switch (true) {
                         case (!(password_verify($code_from_url, $db_activation_code))):
-                            //header('Location: 404.html');
+                            //header('Location: 404.php');
                             die("Invalid activation code. <br> Lost your previous activation code? <a href='reactivate.php' class='noticeable-link'>Get a new one.</a>");
 
                         default: //activates the account by setting the rank to 1 (normal) and getting rid of the activation code
@@ -58,12 +58,12 @@ require('Header.php');
                     }
                 } else {
                     //if the email given is not associated with an existing account, redirect to the 404 page
-                    header('Location: 404.html');
+                    header('Location: 404.php');
                 }
             } else {
                 //if there is no email or no code set, redirect them to the 404 page
                 //need to have both email and code
-                header('Location: 404.html');
+                header('Location: 404.php');
             }
         ?>
         </div>

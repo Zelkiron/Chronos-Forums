@@ -1,3 +1,7 @@
+<?php 
+session_start();
+require('Header.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -13,17 +17,13 @@
 
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php
+            $header = new Header();
+            echo $header->getHeader();
+            ?>
         </div>
             <br>
-        <div class='container container__big'>
+        <div class='container container--big'>
             <?php 
             include('connect.php');
             if (isset($_GET['cat'])) {
@@ -37,7 +37,7 @@
                 
                 //if the category is not found, redirect to 404
                 if($get_category_info_query->rowCount() == 0) {
-                    header('Location: 404.html');
+                    header('Location: 404.php');
                 }
 
                 //intialize content variable
@@ -51,7 +51,7 @@
                     $category_number_of_posts = $row['posts'];
                     
                     //append category variables to content variable
-                    $content .= "<span class='container__main-header'>".$category_name."</span>
+                    $content .= "<span class='container__main-title'>".$category_name."</span>
                     <br><span id='category-description'>".$category_description."</span><br><br>This category has ".$category_number_of_topics." topics and ".$category_number_of_posts." posts.<br>
                     <a href='createTopic.php'><button class='button'>Create a Topic</button></a><hr><br>";
                 }
@@ -104,7 +104,7 @@
                 echo $content;
             } else {
                 //head to this please i'm too lazy to print 404 not found everytime
-                header("Location: 404.html");
+                header("Location: 404.php");
             }
             ?> 
         </div>

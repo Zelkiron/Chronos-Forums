@@ -24,7 +24,7 @@ require('functions.php');
         </div>
             <br>
         <div class='container container--center'>
-            <span class='container__main-header'>Reactivate Account</span>
+            <span class='container__main-title'>Reactivate Account</span>
             <form method='post'>
                 <input type='email' class='default-input' name='email' placeholder='Email' />
                 <input type='submit' class='button' name='submit' value='New Activation Code' />
@@ -51,7 +51,7 @@ require('functions.php');
                 $update_activation_code_query->bindParam('activation_code', $hashed_activation_code);
                 $update_activation_code_query->bindParam('email', $form_email);
 
-                $subject = "Account Activation";
+                $subject = "New Activation Code - Account Activation";
                 $body = 
                 "<html>
                 <body>

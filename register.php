@@ -26,7 +26,7 @@ require('functions.php');
         <br>
 
         <div class='container container--center'>
-            <span class='container__main-header'>Register</span>
+            <span class='container__main-title'>Register</span>
 
             <form method='post'>
                 <input type='email' class='default-input' name='email' placeholder='john@example.com' required autofocus><br>

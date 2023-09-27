@@ -33,6 +33,12 @@ class Post {
         return $update_topic_information_query->execute();
     }
 
+    private function updateCategoryIncrements($value) {
+        $update_category_increments = $this->pdo->prepare('UPDATE categories SET posts = posts + 1 WHERE category_id = :category_id');
+        $update_category_increments->bindParam('category_id', $this->category_id);
+        return $update_category_increments->execute();
+    }
+
     //increments the user's post count by a specified value (usually -1 or 1)
     private function updatePosterNumberOfPosts($value) {
         $update_user_post_count_query = $this->pdo->prepare('UPDATE users SET number_of_posts = number_of_posts + :val WHERE id = :id');
@@ -55,7 +61,7 @@ class Post {
         $post_reply_query->bindParam('post_order', $this->post_order);
         $post_reply_query->bindParam('content', $this->content);
         $post_reply_query->bindParam('reputation', $this->reputation);
-        return $post_reply_query->execute() && $this->updateOriginalTopicOnNewestReply(1) && $this->updatePosterNumberOfPosts(1);
+        return $post_reply_query->execute() && $this->updateOriginalTopicOnNewestReply(1) && $this->updatePosterNumberOfPosts(1) && $this->updateCategoryIncrements(1);
     }
 
     public function deletePost($post_id, $topic_id, $poster_id) {

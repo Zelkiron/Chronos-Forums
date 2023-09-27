@@ -1,5 +1,6 @@
 <?php 
 session_start();
+require('Header.php');
 require("functions.php");
 ?>
 
@@ -18,25 +19,18 @@ require("functions.php");
 
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
             <?php
-            if(checkIfAdmin($_SESSION['id']) == true) {
-                echo "<a id='header__links' href='apanel.php'>Admin Panel</a>";
-            }
+            $header = new Header();
+            echo $header->getHeader();
             ?>
         </div>
             <br>
-        <div class='container'>
+        <div class='container container--big'>
             <?php
             try {
             if(isset($_GET['id'])) {
+                $content = "";
+
                 $url_profile_id = htmlspecialchars($_GET['id']);
 
                 $check_if_user_exists_query = $pdo->prepare("SELECT * FROM users WHERE id = :i");
@@ -44,29 +38,46 @@ require("functions.php");
                 $check_if_user_exists_query->execute();
 
                 if($check_if_user_exists_query->rowCount() == 0) {
-                    header('Location: 404.html');
-                }
-
-                if($url_profile_id == $_SESSION['id']) {
-                    echo 'Welcome to your profile, '.$_SESSION['username'].'! This is currently a work in progress.';
+                    header('Location: 404.php');
                 }
 
                 foreach ($check_if_user_exists_query->fetchAll() as $row) {
+                    $db_id = $row['id'];
                     $db_username = $row['username'];
-                    echo 'This is '.$db_username.'\'s profile.';
+                    $db_date_last_seen = $row['date_last_seen'];
+                    $db_is_online = $row['is_online'];
+                    $db_profile_picture = $row['profile_picture'];
+
+                    $db_date_last_seen = strtotime($db_date_last_seen);
+
+                    $online_status = ""; //going to be updated dynamically based on the user's status
+
+                    if($is_online == 0) {
+                        $online_status = 'Last Seen <br> '.date("n/j/Y", $date_created).'';
+                    } else {
+                        $online_status = 'Online!';
+                    }
+
+                    $content .= "<span class='container__main-title'>".$db_username."</span> <hr>";
+
+                    if($db_id == $_SESSION['id']) {
+                        $content .= "<a href='editProfile.php?id=".$db_id."'><button class='button'>Edit Your Profile</button></a>";
+                    } else {
+                        $content .= 'This is '.$db_username.'\'s profile. This feature overall is currently a work in progress.';
+                    }
+
+                    $content .= "
+                    <div id='profile-information'>
+                        <div id='profile-picture--big'>
+                            <image src='".$db_profile_picture."'></image>
+                        </div>
+                    </div>
+                    ";
                 }
 
-                //i think i had plans with this switch, which is why i will keep it here for now 
-                //but i may delete later (i added the default case later on when i realized that was the reason the code was breaking)
-                /* switch (true) {
-                    case ($check_if_user_exists_query->rowCount() == 0):
-                        header("Location: 404.html");
-                    default:
-                        die('L');
-                } */
-
+                echo $content;
             } else {
-                header("Location: 404.html");
+                header("Location: 404.php");
             } 
         } catch (Exception $e) {
             die($e);

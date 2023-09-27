@@ -1,4 +1,7 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require('Header.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -13,18 +16,14 @@
     </head>
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Topics</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+        <?php
+        $header = new Header();
+        echo $header->getHeader();
+        ?>
         </div>
         <br>
         <div class='container content'>
-            <span class='container__main-header'>Forgot Your...</span>
+            <span class='container__main-title'>Forgot Your...</span>
             <form method='post'>
                 <input type='email' class='default-input' name='email' placeholder='john@example.com' required autofocus><br>
                 <input type='radio' name='ifUser' id='alsoUser' value='alsoUser'><label for='alsoUser'>Password & Username</label><br>

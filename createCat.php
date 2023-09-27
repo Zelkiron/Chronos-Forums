@@ -1,5 +1,6 @@
 <?php 
 require('functions.php');
+require('Header.php');
 session_start(); 
 ?>
 <!DOCTYPE html>
@@ -48,7 +49,7 @@ session_start();
                         die('You are not a high enough rank to access this page!');
                     case ($rank == 4): 
                         echo
-                        "<span class='container__main-header'>Create Category</span>
+                        "<span class='container__main-title'>Create Category</span>
                         <form method='post'>
                         <input type='text' class='default-input' name='catName' placeholder='Name' required autofocus><br>
                         <textarea name='category-description' placeholder='Description' rows='5' cols='40' required></textarea><br>

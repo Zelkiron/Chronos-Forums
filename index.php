@@ -25,11 +25,11 @@ session_start();
 
         <br>
 
-        <div class='container container__big'>
+        <div class='container container--big'>
             <?php
             //welcome the user to the forum if they are logged in or not regardless
             if(isset($_SESSION['id'])) {
-                echo '<h3>Welcome to the forums, '.$_SESSION['username'].'!</h3>';
+                echo '<span class="container__main-title sub-title">Welcome to the forums, '.$_SESSION['username'].'!</span>';
             } else {
                 echo 'Welcome to the forums, Guest! <a class="noticeable-link" href="login.php">Click here</a> to login. <br>';
             }

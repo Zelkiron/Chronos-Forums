@@ -1,3 +1,8 @@
+<?php 
+session_start();
+require('Header.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -12,22 +17,22 @@
     </head>
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+            <?php
+            $header = new Header();
+            echo $header->getHeader();
+            ?>
         </div>
         <br>
-        <div class='container container__big'>
-            <p class='container__main-header'>About Me</p>
-            I am an aspiring web developer. I created this page in June of 2022. 
-            This whole forum is a part of my portfolio that I am going to show to prospective employers. 
-            If any employers are reading I hope I have piqued your interest. 
-            I hope I can be a great addition to your web developing team with the skills I have demonstrated.
+        <div class='container container--big'>
+            <span class='container__main-title'>About Me</span> <br>
+            <span class='about'>Hello. It's nice to meet you. I am a 3rd year university student pursuing an undergraduate computer science degree. <br> <br>
+                I have shared a passion for web development ever since I was 10 years old, back when I was writing basic HTML websites. <br>
+                I started coding in PHP when I was 12, and I had a forum just like this one. <br>
+                That forum was a true passion project of mine. One where nothing like best practices and writing clean code mattered. <br>
+                It was a time when I wrote code for the sake of it. When I wanted to continue seeing this amazing creation grow before my eyes. <br> <br>
+                The Chronos Forums is a homage to that forum, and more. <br>
+                It's a time capsule to show me how far I've come, and how far I can grow. <br> <br>
+                If I am accepted, I hope I will have the chance to continue my growth on your team.</span>
         </div>
     </body>
 </html>

@@ -20,13 +20,12 @@ session_start();
         <div id='header'>
             <?php
             $header = new Header();
-            
             echo $header->getHeader();
             ?>
         </div>
             <br>
-        <div class='container container__big'>
-            <span class='container__main-header'>Member List</span>
+        <div class='container container--big'>
+            <span class='container__main-title'>Member List</span>
             <?php
             $get_all_member_information_query = $pdo->prepare('SELECT `id`, `username`, `rank`, `date_created`, `number_of_posts`, `topics`, `reputation`, `profile_picture` FROM users ORDER BY `id` DESC');
             $get_all_member_information_query->execute();

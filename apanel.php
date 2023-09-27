@@ -28,10 +28,10 @@ if($_SESSION['rank'] < 3) {
         </div>
             <br>
         <div class='container reg-page'>
-            <span class='container__main-header'>Admin Panel</span>
+            <span class='container__main-title'>Admin Panel</span>
             <hr>
             <form method='post'>
-                <span class='title container__main-header sub-title'>Create a Category</span><br>
+                <span class='title container__main-title sub-title'>Create a Category</span><br>
                 <input type='text' class='default-input' name='name' placeholder='Name' required /><br>
                 <textarea name='desc' placeholder='Description' rows='10' cols='75' required></textarea><br>
                 <input type='text' class='default-input' name='visibility' placeholder='Visibility' /><br>
@@ -39,7 +39,7 @@ if($_SESSION['rank'] < 3) {
             </form>
             <hr>
             <form method='post'>
-                <span class='title container__main-header sub-title'>Delete User</span><br>
+                <span class='title container__main-title sub-title'>Delete User</span><br>
                 <input type='text' class='default-input' name='user_to_delete_id' placeholder='User ID' required /><br> 
                 <b style='color: red'>WARNING: THIS CANNOT BE UNDONE</b><br>
                 For security reasons, you can only delete users who are one rank smaller than you. <br>
@@ -47,7 +47,7 @@ if($_SESSION['rank'] < 3) {
             </form>
             <hr>
             <form method='post'>
-                <span class='title container__main-header sub-title'>Change Rank of User</span><br>
+                <span class='title container__main-title sub-title'>Change Rank of User</span><br>
                 <input type='text' class='default-input' name='user_to_change_id' placeholder='User ID' required /><br>
                 <input type='text' class='default-input' name='rank_to_change_to' placeholder='Rank (Numerical)' required /> <br>
                 For security reasons, once again, you can change the rank of users who are originally two ranks smaller than you. <br>

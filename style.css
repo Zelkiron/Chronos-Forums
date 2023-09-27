@@ -28,7 +28,7 @@ body {
     text-align: center;
 }
 
-.container__main-header {
+.container__main-title {
     font-family: 'Kdam Thmor Pro', sans-serif;
     color: #255893;
     margin: inherit;
@@ -37,7 +37,7 @@ body {
 }
 
 /* shouldn't title be in header?
-it's here so the order of header__title .container__main-header doesn't get messed up */
+it's here so the order of header__title .container__main-title doesn't get messed up */
 
 .sub-title {
     font-size: 30px;
@@ -47,7 +47,7 @@ it's here so the order of header__title .container__main-header doesn't get mess
     text-align: left;
 }
 
-.container__big {
+.container--big {
     min-width: 95%;
     text-align: left;
 }
@@ -141,6 +141,11 @@ a {
     height: 100px;
 }
 
+#profile-picture--extra-big img {
+    width: 150px;
+    height: 150px;
+}
+
 #profile-picture--small img {
     border: 1px;
     border-style: solid;
@@ -187,6 +192,7 @@ a {
 
 #post-content {
     display: inline-block;
+    position: relative;
 }
 
 #post { /* what am i doing here */
@@ -274,4 +280,15 @@ a:hover {
 #member-list__member-info {
     display: inline-block;
     vertical-align: top;
+}
+
+.about {
+    line-height: 1.5em;
+}
+
+#post__footer {
+    position: absolute;
+    bottom: 0px;
+    width: 97%;
+    padding: 5px;
 }

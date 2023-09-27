@@ -23,7 +23,7 @@ require('functions.php');
         </div>
 
             <br>
-        <div class='container container__big'>
+        <div class='container container--big'>
             <?php
             if(isset($_GET['id'])) {
                 //prevent xss attacks
@@ -51,7 +51,7 @@ require('functions.php');
                     $poster = $row['poster_id'];
                     $post_name = $row['name'];
                     $post_content = $row['content'];
-                    $post_rep = $row['reputation'];
+                    $post_reputation = $row['reputation'];
                     $date_created = $row['date_created'];
                     $date_edited = $row['date_edited'];
                     $replies = $row['replies'];
@@ -63,12 +63,13 @@ require('functions.php');
                 }
 
                 //got id stored in $topic-post__poster var, use for getting info about the OP
-                $get_topic_poster_query = $pdo->prepare("SELECT username, profile_picture, `rank`, reputation, number_of_posts FROM users WHERE id = :i");
+                $get_topic_poster_query = $pdo->prepare("SELECT id, username, profile_picture, `rank`, reputation, number_of_posts, date_last_seen, is_online FROM users WHERE id = :i");
                 $get_topic_poster_query->bindParam('i', $poster);
                 $get_topic_poster_query->execute();
 
                 //get the rest of the info about the OP
                 foreach($get_topic_poster_query->fetchAll() as $row) {
+                    $poster_id = $row['id'];
                     $poster_name = $row['username'];
                     $poster_rank = $row['rank'];
                     $poster_profile_picture = $row['profile_picture'];
@@ -77,23 +78,29 @@ require('functions.php');
                 
                     //now append all the necessary variables to the post 
                     $content .= 
-                    "<span class='container__main-header'>".$post_name."</span><br>
+                    "<span class='container__main-title'>".$post_name."</span><br>
                     <div id='post'>
                         <div id='user-information'>
-                            <div id='profile-picture--big'>
-                                <image src='".$poster_profile_picture."'></image>
-                                <br>
-                                ".$poster_name."
+                                <a href='profile.php?id=".$poster_id."'>
+                                    <div id='profile-picture--big'>
+                                        <image src='".$poster_profile_picture."'></image>
+                                    </div>
+                                    <br>
+                                    ".$poster_name."
+                                </a>
                                 <br>
                                 ".convertRankToTitle($poster_rank)."
                                 ".$poster_number_of_posts." posts
                                 <br>
                                 ".$poster_reputation." reputation
-                            </div>
                         </div>
                         <div id='post-content'>
-                        <span id='topic-date'>Created on ".date("n/j/Y, g:i A", $date_created)." | ".$post_rep." reputation</span><br>
-                            ".$post_content."
+                            <span id='topic-date'>Created on ".date("n/j/Y, g:i A", $date_created)."</span><br>
+                                ".$post_content."
+                            <div id='post__footer'>
+                            <hr>
+                                ".$post_reputation." reputation
+                            </div>
                         </div>
                     </div> <br>";
                 }
@@ -162,13 +169,12 @@ require('functions.php');
                             <div id='post-content'>
                                 <span id='topic-date'>Created on ".date("n/j/Y, g:i A", $reply_date_created)."</span><br>
                                     ".$reply_content."
-                                <hr>
                                 <div id='post__footer'>
-                                    ".$reply_reputation." reputation | 
+                                <hr>
+                                    ".$reply_reputation." reputation
                                 </div>
                             </div>
-                        </div> 
-                        <br>";
+                        </div> <br>";
                     }
                 }
 
@@ -208,7 +214,7 @@ require('functions.php');
                 echo $content;
             } else {
                 //redirect to 404 page 
-                header("Location: 404.html");
+                header("Location: 404.php");
             }
             ?>
         </div>

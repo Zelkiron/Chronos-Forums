@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require('functions.php');
+require('Header.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -13,18 +17,19 @@
     </head>
     <body>
         <div id='header'>
-            <span class='header__title'>CHRONOS</span>
-            <a id='header__links' href='index.php'>Home</a>
-            <a id='header__links' href='new_posts.php'>Recent Posts</a>
-            <a id='header__links' href='status_updates.php'>Recent Status Updates</a>
-            <a id='header__links' href='members.php'>Member List</a>
-            <a id='header__links' href='staff.php'>Staff List</a>
-            <a id='header__links' href='about.php'>About Me</a>
-            <a id='header__links' href='#' onclick='profile()'>Profile</a>
+        <?php
+        $header = new Header();
+        echo $header->getHeader();
+        ?>
         </div>
         <br>
         <div class='container'>
-            <?php session_destroy(); header('Location: login.php'); ?>
+            <?php 
+            $update_user_information = $pdo->prepare('UPDATE users SET is_online = 0 AND date_last_seen = now() WHERE id = :i');
+            $update_user_information->bindParam('i', $_SESSION['id']);
+            $update_user_information->execute();
+            session_destroy(); 
+            header('Location: login.php'); ?>
         </div>
     </body>
 </html>

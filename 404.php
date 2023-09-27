@@ -23,9 +23,9 @@
         </div>
             <br>
         <div class='container'>
-            <span class="title container__main-header">403 Insufficient Permission</span>
+            <span class="title container__main-title">404 Not Found</span>
             <br>
-            You do not have permission to see what is displayed on this page. 
+            The content here is not found.
             <br>
             You will be redirected back to the homepage in five seconds. 
             <script>window.setTimeout("location=('index.php');", "5000");</script>

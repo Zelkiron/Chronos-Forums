@@ -1,1 +1,1 @@
-update users set `rank` = 4 where id = 1
+alter table users rename column date_last_joined to date_last_seen

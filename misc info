@@ -22,13 +22,7 @@ Visibility ranking:
 Change visiblity for createTopic for staff categories and stuff.
 
 To-do:
-- set up something in case the user did not get the email for the activation code
-- prevent banned users from logging in
-- memebers page
 - add statuses table in db
-- update topic.php to reflect refactored code
-- replace all of the links with the new headers
-- add these to user db: date last joined, 
 - INCREMENT CATEGORY INFORMATOIN AS WELL
 - limit announcement perms, add something to categories which limit what ranks can make posts
 - create an alert that stands out when somethign is successful/or not 

@@ -6,6 +6,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `rank` tinyint(1) NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_last_seen` timestamp NULL DEFAULT NULL,
   `activation_code` varchar(255) NOT NULL,
   `code_to_change_password` varchar(255) NULL DEFAULT NULL,
   `number_of_posts` int NOT NULL,
@@ -13,6 +14,7 @@ CREATE TABLE `users` (
   `topics` int NOT NULL,
   `reputation` int NOT NULL,
   `profile_picture` text NULL DEFAULT NULL,
+  `is_online` tinyint NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `posts` (
